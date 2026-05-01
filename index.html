@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Runway Trend Atlas — FW2016 to FW2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="chart.umd.min.js"></script>
+<style>
+:root {
+  --paper: #f4f1ea;
+  --paper-dark: #e8e4d8;
+  --ink: #1a1612;
+  --ink-soft: #4a423a;
+  --ink-faint: #8a8175;
+  --rule: #c8c0b0;
+  --rule-faint: #d8d2c4;
+  --accent: #8b2439;
+  --accent-soft: #b85968;
+
+  --tier-1: #1f3a5f;
+  --tier-2: #7d3c2e;
+  --tier-3: #5a7d3a;
+  --tier-4: #4a3a5a;
+  --tier-5: #a07a3a;
+
+  --serif: 'Cormorant Garamond', 'Times New Roman', serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.55;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(139, 36, 57, 0.025) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(31, 58, 95, 0.02) 0%, transparent 40%);
+}
+
+/* Subtle paper grain */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none;
+  opacity: 0.5; z-index: 1000;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 56px 48px 96px;
+}
+
+/* ============ MASTHEAD ============ */
+.masthead {
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 28px;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.masthead-top {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--rule-faint);
+  padding-bottom: 12px;
+}
+.masthead-top .vol {
+  display: flex; gap: 16px;
+}
+.masthead-top .vol span { color: var(--ink-faint); }
+
+h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(48px, 7vw, 88px);
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  margin-bottom: 18px;
+  color: var(--ink);
+}
+h1 .roman { font-style: normal; font-weight: 400; }
+
+.subtitle {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink-soft);
+  max-width: 720px;
+  line-height: 1.4;
+  margin-bottom: 28px;
+}
+
+.meta-strip {
+  display: flex; gap: 0; flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.meta-strip > div {
+  padding: 4px 22px 4px 0;
+  border-right: 1px solid var(--rule);
+  margin-right: 22px;
+}
+.meta-strip > div:last-child { border-right: none; margin-right: 0; }
+.meta-strip strong { font-weight: 600; color: var(--ink); }
+
+/* ============ SECTION HEADERS ============ */
+.section {
+  margin-bottom: 80px;
+}
+.section-num {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent); font-weight: 500;
+  margin-bottom: 6px;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: 38px; font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  margin-bottom: 8px;
+}
+.section-title em { font-style: italic; color: var(--accent); }
+
+.section-desc {
+  font-family: var(--serif);
+  font-size: 17px; font-style: italic;
+  color: var(--ink-soft);
+  max-width: 720px;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.divider-rule {
+  height: 1px; background: var(--ink);
+  margin: 0 0 28px;
+}
+
+/* ============ CONTROLS ============ */
+.controls {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  padding: 22px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 32px;
+}
+.control-group label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 6px;
+}
+.control-group select, .control-group .toggle {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ink);
+  padding: 4px 0 6px;
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%231a1612' fill='none' stroke-width='1.2'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+}
+.control-group select:focus { outline: none; }
+.control-group .toggle {
+  background-image: none;
+  text-align: left;
+  display: flex; align-items: center; gap: 10px;
+  user-select: none;
+}
+.toggle-dot {
+  display: inline-block;
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 1px solid var(--ink);
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.toggle.on .toggle-dot { background: var(--accent); border-color: var(--accent); }
+
+/* ============ CHART ============ */
+.chart-wrap {
+  background: rgba(255,255,255,0.4);
+  border: 1px solid var(--rule);
+  padding: 28px 32px 32px;
+  position: relative;
+  margin-bottom: 24px;
+}
+.chart-wrap::before {
+  content: ''; position: absolute; top: -1px; left: -1px;
+  width: 16px; height: 16px;
+  border-top: 2px solid var(--ink);
+  border-left: 2px solid var(--ink);
+}
+.chart-wrap::after {
+  content: ''; position: absolute; bottom: -1px; right: -1px;
+  width: 16px; height: 16px;
+  border-bottom: 2px solid var(--ink);
+  border-right: 2px solid var(--ink);
+}
+.chart-meta {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--rule);
+}
+.chart-attr-name {
+  font-family: var(--serif);
+  font-size: 22px; font-weight: 500; font-style: italic;
+}
+.chart-attr-name .roman { font-style: normal; }
+.chart-readout {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.05em; color: var(--ink-faint);
+}
+.chart-canvas-wrap {
+  position: relative;
+  height: 380px;
+}
+
+.chart-legend {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  padding-top: 16px;
+  margin-top: 8px;
+  border-top: 1px dashed var(--rule);
+  font-size: 12px;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: opacity 0.2s;
+  user-select: none;
+}
+.legend-item.muted { opacity: 0.3; }
+.legend-line {
+  width: 22px; height: 2px;
+}
+.legend-text small {
+  font-family: var(--mono); font-size: 9.5px;
+  color: var(--ink-faint);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-left: 4px;
+}
+
+/* ============ TIER PANEL ============ */
+.tier-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.tier-list {
+  list-style: none;
+  border-top: 1px solid var(--ink);
+}
+.tier-list li {
+  border-bottom: 1px solid var(--rule);
+  padding: 14px 0;
+  cursor: pointer;
+  transition: background 0.15s, padding-left 0.15s;
+}
+.tier-list li:hover { background: rgba(0,0,0,0.02); padding-left: 8px; }
+.tier-list li.active {
+  background: rgba(139, 36, 57, 0.05);
+  padding-left: 12px;
+  border-left: 3px solid var(--accent);
+}
+.tier-row-top {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px;
+}
+.tier-name {
+  font-family: var(--serif);
+  font-size: 19px; font-weight: 500;
+}
+.tier-num {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.tier-bar-wrap {
+  margin-top: 8px;
+  height: 4px; background: var(--rule-faint);
+  position: relative; overflow: hidden;
+}
+.tier-bar { height: 100%; transition: width 0.4s ease; }
+.tier-stat {
+  font-family: var(--mono); font-size: 10.5px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+  display: flex; justify-content: space-between;
+}
+.tier-stat .delta { font-weight: 500; }
+.tier-stat .delta.up { color: #4a7d3a; }
+.tier-stat .delta.down { color: var(--accent); }
+
+.tier-detail {
+  background: rgba(255,255,255,0.4);
+  border: 1px solid var(--rule);
+  padding: 24px 28px;
+  min-height: 360px;
+}
+.tier-detail-header {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ink);
+}
+.tier-detail-name {
+  font-family: var(--serif);
+  font-size: 26px; font-weight: 500;
+  font-style: italic;
+}
+.tier-detail-name .roman { font-style: normal; }
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  margin-top: 12px;
+}
+.brand-row {
+  padding: 8px 12px 8px 0;
+  border-bottom: 1px dotted var(--rule-faint);
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.brand-row:hover { background: rgba(0,0,0,0.03); padding-left: 8px; }
+.brand-row.selected {
+  background: rgba(139, 36, 57, 0.08);
+  border-bottom-color: var(--accent);
+}
+.brand-name { font-family: var(--serif); font-size: 16px; }
+.brand-stat {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--ink-faint);
+}
+
+/* ============ PALETTE STRIP ============ */
+.palette-strip {
+  display: grid;
+  grid-template-columns: repeat(21, 1fr);
+  gap: 1px;
+  border: 1px solid var(--ink);
+  margin-bottom: 16px;
+}
+.palette-col {
+  display: flex; flex-direction: column;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.palette-col:hover { transform: translateY(-3px); z-index: 3; }
+.palette-col.active { transform: translateY(-6px); z-index: 4;
+  box-shadow: 0 6px 18px -8px rgba(0,0,0,0.3); }
+.palette-swatch {
+  height: 36px;
+  position: relative;
+}
+.palette-label {
+  background: var(--paper);
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 6px 0 5px;
+  border-top: 1px solid var(--ink);
+  color: var(--ink-soft);
+}
+.palette-col.active .palette-label {
+  background: var(--ink); color: var(--paper);
+}
+
+.palette-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  border: 1px solid var(--rule);
+  padding: 28px;
+  background: rgba(255,255,255,0.4);
+}
+.palette-detail-left h4 {
+  font-family: var(--serif);
+  font-size: 26px; font-weight: 500; font-style: italic;
+  margin-bottom: 4px;
+}
+.palette-detail-left h4 .roman { font-style: normal; }
+.palette-detail-left p {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 15px; line-height: 1.4;
+  margin-bottom: 18px;
+}
+.palette-detail-right {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.palette-color-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.palette-color-row:last-child { border-bottom: none; }
+.palette-color-chip {
+  height: 40px;
+  border: 1px solid var(--ink);
+}
+.palette-color-info {
+  font-family: var(--mono); font-size: 11px;
+}
+.palette-color-info .hex { font-weight: 600; font-size: 13px; }
+.palette-color-info .lab { color: var(--ink-faint); margin-top: 2px; }
+.palette-color-pct {
+  font-family: var(--serif); font-size: 22px;
+  font-weight: 500; font-style: italic;
+}
+.palette-stats {
+  display: flex; gap: 24px;
+  margin-top: 18px; padding-top: 14px;
+  border-top: 1px solid var(--rule);
+}
+.palette-stats > div {
+  font-family: var(--mono); font-size: 11px;
+}
+.palette-stats .stat-label {
+  color: var(--ink-faint);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 9.5px;
+  margin-bottom: 3px;
+}
+.palette-stats .stat-val {
+  font-family: var(--serif); font-size: 22px;
+  font-weight: 500;
+}
+
+/* ============ FORECAST SECTION ============ */
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0;
+  margin-bottom: 24px;
+}
+.forecast-card {
+  background: rgba(255,255,255,0.4);
+  padding: 24px 22px 20px;
+  border-top: 1px solid var(--ink);
+  border-left: 1px solid var(--ink);
+}
+.forecast-card:nth-last-child(-n+1),
+.forecast-card:last-child {
+  /* nothing special — handled by container border-bottom */
+}
+.forecast-grid {
+  border-right: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.forecast-card-label {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 4px;
+}
+.forecast-card-season {
+  font-family: var(--serif); font-style: italic;
+  font-size: 30px; font-weight: 500;
+  margin-bottom: 14px;
+}
+.forecast-card-season .roman { font-style: normal; }
+.forecast-swatches {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.forecast-swatch-block .swatch-label {
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 5px;
+}
+.forecast-swatch {
+  display: flex;
+  height: 56px;
+  border: 1px solid var(--ink);
+}
+.forecast-swatch > div { flex: 1; }
+.forecast-swatch.predicted {
+  border-style: dashed;
+}
+.forecast-card-mae {
+  font-family: var(--mono); font-size: 11px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dotted var(--rule);
+  display: flex; justify-content: space-between;
+}
+.forecast-card-mae .label {
+  color: var(--ink-faint);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 9.5px;
+}
+.forecast-card-mae .val {
+  font-weight: 500;
+}
+
+.forecast-disclaimer {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 14px;
+  padding: 16px 20px;
+  border-left: 2px solid var(--accent);
+  background: rgba(139, 36, 57, 0.04);
+}
+.forecast-disclaimer strong { font-weight: 600; font-style: normal; }
+
+/* ============ FOOTER ============ */
+footer {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 1px solid var(--ink);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  font-family: var(--mono); font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: 0.05em;
+}
+footer .colophon { font-family: var(--serif); font-style: italic; font-size: 14px; max-width: 580px; }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 900px) {
+  .container { padding: 32px 24px 64px; }
+  .controls { grid-template-columns: 1fr 1fr; }
+  .tier-grid { grid-template-columns: 1fr; }
+  .forecast-grid { grid-template-columns: 1fr; }
+  .palette-strip { grid-template-columns: repeat(7, 1fr); }
+  h1 { font-size: 56px; }
+  .section-title { font-size: 28px; }
+}
+
+/* tooltip */
+.tooltip {
+  position: absolute;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 12px;
+  font-family: var(--mono); font-size: 11px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.tooltip.on { opacity: 1; }
+
+/* loading */
+.loading {
+  text-align: center;
+  padding: 80px 20px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--ink-faint);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- ============== MASTHEAD ============== -->
+<header class="masthead">
+  <div class="masthead-top">
+    <div class="vol">
+      <span>Vol. I</span>
+      <span>Issue 01</span>
+      <span>FW 2016 — FW 2026</span>
+    </div>
+    <div>An Interactive Companion to "Intelligent Fashion Forecasting"</div>
+  </div>
+
+  <h1>The Runway <em>Trend</em><br><span class="roman">Atlas</span>.</h1>
+
+  <p class="subtitle">
+    A decade of luxury runway looks, decoded by computer vision.
+    Browse aesthetic, silhouette, color and forecast trends across 50 houses
+    and 22 seasons &mdash; the way a forecaster, but faster.
+  </p>
+
+  <div class="meta-strip">
+    <div><strong>50</strong> luxury houses</div>
+    <div><strong>22</strong> fashion seasons</div>
+    <div><strong>48,534</strong> looks analyzed</div>
+    <div><strong>5</strong> tiers</div>
+    <div><strong>53</strong> CLIP labels</div>
+    <div>K-means LAB · CLIP zero-shot · time-series forecasts</div>
+  </div>
+</header>
+
+<div id="content" class="loading">Loading dataset…</div>
+
+</div>
+
+<!-- ============== TEMPLATE FOR CONTENT (rendered after data loads) ============== -->
+<template id="content-template">
+
+<!-- ============== SECTION 1: ATTRIBUTE EXPLORER ============== -->
+<section class="section" id="explorer">
+  <div class="section-num">§ 01 — Explorer</div>
+  <h2 class="section-title">A trend, <em>over time</em>.</h2>
+  <p class="section-desc">
+    Pick any visual attribute and watch its share of the runway rise and fall
+    across two decades of seasons. Toggle the seasonal-naive forecast to compare
+    the model's bet on FW2024–FW2026 against what actually walked.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Attribute Group</label>
+      <select id="group-select"></select>
+    </div>
+    <div class="control-group">
+      <label>Attribute</label>
+      <select id="attr-select"></select>
+    </div>
+    <div class="control-group">
+      <label>View Mode</label>
+      <select id="view-select">
+        <option value="tier">By Tier</option>
+        <option value="industry">Industry Average</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Forecast Overlay</label>
+      <button class="toggle" id="forecast-toggle">
+        <span class="toggle-dot"></span>
+        <span id="forecast-label">Off</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-meta">
+      <div class="chart-attr-name" id="chart-attr-display">—</div>
+      <div class="chart-readout" id="chart-readout">% of looks per season</div>
+    </div>
+    <div class="chart-canvas-wrap">
+      <canvas id="main-chart"></canvas>
+    </div>
+    <div class="chart-legend" id="chart-legend"></div>
+  </div>
+</section>
+
+<!-- ============== SECTION 2: TIER DRILL-DOWN ============== -->
+<section class="section" id="tiers">
+  <div class="section-num">§ 02 — Tier Drill-Down</div>
+  <h2 class="section-title">Who is leading <em>whom</em>.</h2>
+  <p class="section-desc">
+    Trickle-down theory predicts that French haute couture sets the agenda.
+    Click any tier to see its constituent houses and how strongly each adopted
+    the selected attribute over the decade.
+  </p>
+  <div class="tier-grid">
+    <ul class="tier-list" id="tier-list"></ul>
+    <div class="tier-detail" id="tier-detail"></div>
+  </div>
+</section>
+
+<!-- ============== SECTION 3: COLOR PALETTE ============== -->
+<section class="section" id="palette">
+  <div class="section-num">§ 03 — Color Atlas</div>
+  <h2 class="section-title">A decade in <em>five colors</em>.</h2>
+  <p class="section-desc">
+    Each column is one fashion season, distilled into its five most representative
+    hues by weighted K-means clustering in LAB color space. Click a season to inspect.
+  </p>
+  <div class="palette-strip" id="palette-strip"></div>
+  <div class="palette-detail" id="palette-detail"></div>
+</section>
+
+<!-- ============== SECTION 4: FORECAST ============== -->
+<section class="section" id="forecast">
+  <div class="section-num">§ 04 — Forecast Lab</div>
+  <h2 class="section-title">Predicted vs. <em>walked</em>.</h2>
+  <p class="section-desc">
+    The model predicts the dominant collection palette for each test season
+    using only what came before. Compare the forecast (dashed border) against
+    the season as it actually appeared on the runway (solid border).
+  </p>
+  <div class="forecast-grid" id="forecast-grid"></div>
+  <div class="forecast-disclaimer">
+    <strong>Note on the forecast.</strong>
+    These predictions use a seasonal-naive baseline (the value of the same
+    season-type one year prior) — the same benchmark cited in the thesis.
+    To swap in the trained ARIMA / Prophet / LSTM / Attention-LSTM forecasts,
+    replace the <code style="font-family:var(--mono); font-size:12px; background:rgba(0,0,0,0.06); padding:1px 5px;">tier_forecasts</code> and
+    <code style="font-family:var(--mono); font-size:12px; background:rgba(0,0,0,0.06); padding:1px 5px;">color_forecast</code>
+    arrays in <code style="font-family:var(--mono); font-size:12px; background:rgba(0,0,0,0.06); padding:1px 5px;">data.json</code>.
+  </div>
+</section>
+
+</template>
+
+<div class="container">
+  <footer>
+    <div class="colophon">
+      Built from the dataset accompanying Caitlin Kontaridis's master's thesis,
+      <em>Intelligent Fashion Forecasting: Computer Vision and Fashion Diffusion</em>
+      &mdash; Quantitative Methods of Social Sciences, GSAS, Columbia University, 2026.
+    </div>
+    <div>
+      Cormorant Garamond / Inter / JetBrains Mono<br>
+      Charts: Chart.js · Color: CIE LAB
+    </div>
+  </footer>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ============================================================
+// LOAD DATA
+// ============================================================
+let DATA = null;
+let CHART = null;
+let STATE = {
+  group: "aesthetic",
+  attr: 0,
+  view: "tier",
+  showForecast: false,
+  selectedTier: 1,
+  selectedSeasonIdx: 0,
+  selectedBrand: null,
+  legendMuted: new Set(),
+};
+
+async function loadData() {
+  try {
+    const res = await fetch('data.json');
+    if (!res.ok) throw new Error('Failed to load data.json');
+    DATA = await res.json();
+
+    // Default-select first attribute of default group, last season for palette
+    STATE.attr = 0;
+    STATE.selectedSeasonIdx = DATA.seasons.length - 1;
+
+    document.getElementById('content').classList.remove('loading');
+    document.getElementById('content').innerHTML = '';
+    document.getElementById('content').appendChild(
+      document.getElementById('content-template').content.cloneNode(true)
+    );
+
+    initControls();
+    renderAll();
+  } catch (e) {
+    document.getElementById('content').innerHTML =
+      `<div style="text-align:center; padding:40px; color:var(--accent); font-family:var(--serif); font-size:18px; font-style:italic;">
+       Could not load dataset: ${e.message}<br>
+       <span style="font-size:14px; color:var(--ink-faint);">
+       Make sure data.json is in the same folder as this HTML file, and that you're
+       opening this through a local server (e.g. <code>python3 -m http.server</code>) — opening directly via file:// is blocked by browser security.
+       </span></div>`;
+    console.error(e);
+  }
+}
+
+// ============================================================
+// CONTROLS
+// ============================================================
+function initControls() {
+  const groupSel = document.getElementById('group-select');
+  Object.entries(DATA.attribute_groups).forEach(([key, info]) => {
+    const opt = document.createElement('option');
+    opt.value = key; opt.textContent = info.name;
+    if (key === STATE.group) opt.selected = true;
+    groupSel.appendChild(opt);
+  });
+  groupSel.addEventListener('change', (e) => {
+    STATE.group = e.target.value;
+    STATE.attr = 0;
+    populateAttrSelect();
+    renderAll();
+  });
+
+  populateAttrSelect();
+
+  document.getElementById('view-select').addEventListener('change', (e) => {
+    STATE.view = e.target.value;
+    renderChart();
+  });
+
+  document.getElementById('forecast-toggle').addEventListener('click', () => {
+    STATE.showForecast = !STATE.showForecast;
+    const btn = document.getElementById('forecast-toggle');
+    btn.classList.toggle('on', STATE.showForecast);
+    document.getElementById('forecast-label').textContent = STATE.showForecast ? 'On' : 'Off';
+    renderChart();
+  });
+}
+
+function populateAttrSelect() {
+  const sel = document.getElementById('attr-select');
+  sel.innerHTML = '';
+  DATA.attribute_groups[STATE.group].labels.forEach((label, i) => {
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = label;
+    sel.appendChild(opt);
+  });
+  sel.value = STATE.attr;
+  sel.onchange = (e) => {
+    STATE.attr = parseInt(e.target.value);
+    renderAll();
+  };
+}
+
+// ============================================================
+// MAIN RENDER
+// ============================================================
+function renderAll() {
+  renderChart();
+  renderTierList();
+  renderTierDetail();
+  if (!document.querySelector('.palette-strip').children.length) renderPaletteStrip();
+  renderPaletteDetail();
+  renderForecastGrid();
+}
+
+// ============================================================
+// CHART
+// ============================================================
+function renderChart() {
+  const labels = DATA.season_labels;
+  const seriesData = DATA.tier_series[STATE.group][STATE.attr];
+  const fcData = DATA.tier_forecasts[STATE.group][STATE.attr];
+
+  document.getElementById('chart-attr-display').innerHTML =
+    `<span class="roman">${DATA.attribute_groups[STATE.group].name}:</span> ${DATA.attribute_groups[STATE.group].labels[STATE.attr]}`;
+
+  let datasets = [];
+
+  if (STATE.view === 'tier') {
+    DATA.tiers.forEach((tier) => {
+      const muted = STATE.legendMuted.has(tier.id);
+      const data = (seriesData[tier.id] || []).map(v => v == null ? null : v * 100);
+      datasets.push({
+        label: tier.name,
+        data,
+        borderColor: tier.color,
+        backgroundColor: tier.color + '10',
+        borderWidth: 2,
+        tension: 0.32,
+        pointRadius: 2,
+        pointHoverRadius: 5,
+        spanGaps: true,
+        hidden: muted,
+      });
+      if (STATE.showForecast) {
+        const fc = (fcData[tier.id] || []).map(v => v == null ? null : v * 100);
+        datasets.push({
+          label: tier.name + ' (forecast)',
+          data: fc,
+          borderColor: tier.color,
+          borderDash: [4, 4],
+          borderWidth: 1.5,
+          tension: 0,
+          pointRadius: 0,
+          fill: false,
+          spanGaps: false,
+          hidden: muted,
+        });
+      }
+    });
+  } else {
+    // Industry average — weighted by tier size
+    const industry = labels.map((_, i) => {
+      let sum = 0, n = 0;
+      DATA.tiers.forEach(t => {
+        const v = seriesData[t.id]?.[i];
+        if (v != null) { sum += v * t.brands.length; n += t.brands.length; }
+      });
+      return n ? (sum / n) * 100 : null;
+    });
+    const indFc = labels.map((_, i) => {
+      let sum = 0, n = 0;
+      DATA.tiers.forEach(t => {
+        const v = fcData[t.id]?.[i];
+        if (v != null) { sum += v * t.brands.length; n += t.brands.length; }
+      });
+      return n ? (sum / n) * 100 : null;
+    });
+    datasets.push({
+      label: 'Industry average',
+      data: industry,
+      borderColor: '#1a1612',
+      backgroundColor: 'rgba(26, 22, 18, 0.05)',
+      borderWidth: 2.5,
+      tension: 0.32,
+      pointRadius: 3, pointHoverRadius: 6,
+      fill: true, spanGaps: true,
+    });
+    if (STATE.showForecast) {
+      datasets.push({
+        label: 'Forecast',
+        data: indFc,
+        borderColor: '#8b2439',
+        borderDash: [5, 5],
+        borderWidth: 2,
+        pointRadius: 0,
+        spanGaps: false,
+      });
+    }
+  }
+
+  if (CHART) CHART.destroy();
+  const ctx = document.getElementById('main-chart').getContext('2d');
+  CHART = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1a1612',
+          titleFont: { family: 'JetBrains Mono', size: 11 },
+          bodyFont: { family: 'JetBrains Mono', size: 11 },
+          titleColor: '#f4f1ea',
+          bodyColor: '#f4f1ea',
+          padding: 10,
+          borderColor: '#1a1612',
+          callbacks: {
+            label: function(ctx) {
+              if (ctx.parsed.y == null) return '';
+              return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`;
+            }
+          }
+        },
+        annotation: {}
+      },
+      scales: {
+        x: {
+          grid: { display: false, drawBorder: true, color: '#c8c0b0' },
+          ticks: {
+            font: { family: 'JetBrains Mono', size: 10 },
+            color: '#4a423a',
+            maxRotation: 0,
+            autoSkip: false,
+            callback: function(val, idx) {
+              const lab = this.getLabelForValue(val);
+              return idx % 2 === 0 ? lab : '';
+            }
+          }
+        },
+        y: {
+          grid: { color: '#e8e4d8', drawBorder: false },
+          ticks: {
+            font: { family: 'JetBrains Mono', size: 10 },
+            color: '#4a423a',
+            callback: v => v + '%'
+          },
+          beginAtZero: true,
+        }
+      }
+    }
+  });
+
+  renderChartLegend();
+}
+
+function renderChartLegend() {
+  const legend = document.getElementById('chart-legend');
+  legend.innerHTML = '';
+  if (STATE.view === 'industry') {
+    legend.innerHTML = `
+      <div class="legend-item"><span class="legend-line" style="background:#1a1612"></span><span class="legend-text">Industry average</span></div>
+      ${STATE.showForecast ? `<div class="legend-item"><span class="legend-line" style="background: linear-gradient(to right, #8b2439 50%, transparent 50%); background-size: 6px 2px;"></span><span class="legend-text">Forecast <small>SS24+</small></span></div>` : ''}
+    `;
+    return;
+  }
+  DATA.tiers.forEach(tier => {
+    const muted = STATE.legendMuted.has(tier.id);
+    const item = document.createElement('div');
+    item.className = 'legend-item' + (muted ? ' muted' : '');
+    item.innerHTML = `<span class="legend-line" style="background:${tier.color}"></span><span class="legend-text">${tier.name}</span>`;
+    item.onclick = () => {
+      if (STATE.legendMuted.has(tier.id)) STATE.legendMuted.delete(tier.id);
+      else STATE.legendMuted.add(tier.id);
+      renderChart();
+    };
+    legend.appendChild(item);
+  });
+  if (STATE.showForecast) {
+    const fcItem = document.createElement('div');
+    fcItem.className = 'legend-item';
+    fcItem.innerHTML = `<span class="legend-line" style="background: repeating-linear-gradient(to right, #4a423a 0 4px, transparent 4px 8px);"></span><span class="legend-text">Forecast <small>SS24+</small></span>`;
+    legend.appendChild(fcItem);
+  }
+}
+
+// ============================================================
+// TIER PANEL
+// ============================================================
+function renderTierList() {
+  const ul = document.getElementById('tier-list');
+  ul.innerHTML = '';
+  const seriesData = DATA.tier_series[STATE.group][STATE.attr];
+
+  DATA.tiers.forEach(tier => {
+    const series = (seriesData[tier.id] || []).filter(v => v != null);
+    const latest = series.length ? series[series.length - 1] : 0;
+    const earliest = series.length ? series[0] : 0;
+    const delta = latest - earliest;
+    const peak = series.length ? Math.max(...series) : 0;
+
+    const li = document.createElement('li');
+    if (tier.id === STATE.selectedTier) li.classList.add('active');
+    li.innerHTML = `
+      <div class="tier-row-top">
+        <span class="tier-name">${tier.name.split('—')[1]?.trim() || tier.name}</span>
+        <span class="tier-num">T0${tier.id}</span>
+      </div>
+      <div class="tier-bar-wrap">
+        <div class="tier-bar" style="width:${(latest * 100 / Math.max(0.01, peak)).toFixed(1)}%; background:${tier.color}"></div>
+      </div>
+      <div class="tier-stat">
+        <span>${(latest * 100).toFixed(1)}% &middot; latest</span>
+        <span class="delta ${delta >= 0 ? 'up' : 'down'}">${delta >= 0 ? '▲' : '▼'} ${Math.abs(delta * 100).toFixed(1)}pp</span>
+      </div>
+    `;
+    li.onclick = () => {
+      STATE.selectedTier = tier.id;
+      STATE.selectedBrand = null;
+      renderTierList();
+      renderTierDetail();
+    };
+    ul.appendChild(li);
+  });
+}
+
+function renderTierDetail() {
+  const tier = DATA.tiers.find(t => t.id === STATE.selectedTier);
+  const detail = document.getElementById('tier-detail');
+  const brandSeriesAll = DATA.brand_series[STATE.group][STATE.attr];
+  const attrLabel = DATA.attribute_groups[STATE.group].labels[STATE.attr];
+
+  // Compute, for each brand in this tier, latest value and 10-year change
+  const brandStats = tier.brands.map(b => {
+    const series = (brandSeriesAll[b] || []).filter(v => v != null);
+    const latest = series.length ? series[series.length - 1] : 0;
+    const earliest = series.length ? series[0] : 0;
+    return { brand: b, latest, delta: latest - earliest };
+  });
+  brandStats.sort((a, b) => b.latest - a.latest);
+
+  detail.innerHTML = `
+    <div class="tier-detail-header">
+      <div class="tier-detail-name"><span class="roman">${tier.name.split('—')[0]?.trim()}</span> &mdash; <em>${tier.name.split('—')[1]?.trim() || ''}</em></div>
+      <div style="font-family:var(--mono); font-size:11px; color:var(--ink-faint); letter-spacing:0.06em; margin-top:4px;">
+        ${tier.brands.length} HOUSES &middot; FOR ATTRIBUTE: ${attrLabel.toUpperCase()}
+      </div>
+    </div>
+    <div class="brand-grid" id="brand-grid"></div>
+  `;
+
+  const grid = document.getElementById('brand-grid');
+  brandStats.forEach(({ brand, latest, delta }) => {
+    const row = document.createElement('div');
+    row.className = 'brand-row';
+    if (brand === STATE.selectedBrand) row.classList.add('selected');
+    row.style.borderLeft = `2px solid ${tier.color}`;
+    row.style.paddingLeft = '10px';
+    row.innerHTML = `
+      <span class="brand-name">${DATA.brand_pretty[brand]}</span>
+      <span class="brand-stat">${(latest * 100).toFixed(0)}% <span style="color:${delta >= 0 ? '#4a7d3a' : '#8b2439'}; margin-left:6px;">${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(0)}pp</span></span>
+    `;
+    row.onclick = () => {
+      STATE.selectedBrand = brand === STATE.selectedBrand ? null : brand;
+      renderTierDetail();
+    };
+    grid.appendChild(row);
+  });
+
+  // If a brand is selected, show its mini sparkline
+  if (STATE.selectedBrand) {
+    const series = brandSeriesAll[STATE.selectedBrand];
+    const sparkContainer = document.createElement('div');
+    sparkContainer.style.marginTop = '20px';
+    sparkContainer.style.paddingTop = '16px';
+    sparkContainer.style.borderTop = '1px solid var(--rule)';
+    sparkContainer.innerHTML = `
+      <div style="font-family:var(--serif); font-size:18px; font-style:italic; margin-bottom:6px;">
+        ${DATA.brand_pretty[STATE.selectedBrand]} <span class="roman" style="font-style:normal; color:var(--ink-faint); font-size:14px;">— ${attrLabel}, FW16 → FW26</span>
+      </div>
+      <canvas id="brand-spark" height="80"></canvas>
+    `;
+    detail.appendChild(sparkContainer);
+
+    setTimeout(() => {
+      const ctx = document.getElementById('brand-spark').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: DATA.season_labels,
+          datasets: [{
+            data: series.map(v => v == null ? null : v * 100),
+            borderColor: tier.color,
+            backgroundColor: tier.color + '20',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 2.5,
+            pointBackgroundColor: tier.color,
+            spanGaps: true,
+            borderWidth: 2,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { displayColors: false, backgroundColor: '#1a1612', titleFont: {family: 'JetBrains Mono', size: 10}, bodyFont: {family: 'JetBrains Mono', size: 10} } },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { family: 'JetBrains Mono', size: 9 }, callback: function(v, i) { return i % 4 === 0 ? this.getLabelForValue(v) : ''; } } },
+            y: { grid: { color: '#e8e4d8' }, ticks: { font: { family: 'JetBrains Mono', size: 9 }, callback: v => v + '%' }, beginAtZero: true }
+          }
+        }
+      });
+    }, 30);
+  }
+}
+
+// ============================================================
+// PALETTE STRIP
+// ============================================================
+function renderPaletteStrip() {
+  const strip = document.getElementById('palette-strip');
+  strip.innerHTML = '';
+  // Hard-set columns based on actual season count
+  strip.style.gridTemplateColumns = `repeat(${DATA.seasons.length}, 1fr)`;
+
+  DATA.seasons.forEach((season, idx) => {
+    const palette = DATA.palette_strip[season] || [];
+    const col = document.createElement('div');
+    col.className = 'palette-col';
+    if (idx === STATE.selectedSeasonIdx) col.classList.add('active');
+
+    // 5 swatches stacked
+    palette.forEach(p => {
+      const sw = document.createElement('div');
+      sw.className = 'palette-swatch';
+      sw.style.background = p.hex;
+      sw.style.flex = p.weight;
+      col.appendChild(sw);
+    });
+
+    const label = document.createElement('div');
+    label.className = 'palette-label';
+    label.textContent = DATA.season_labels[idx];
+    col.appendChild(label);
+
+    col.onclick = () => {
+      STATE.selectedSeasonIdx = idx;
+      renderPaletteStrip();
+      renderPaletteDetail();
+    };
+    strip.appendChild(col);
+  });
+}
+
+function renderPaletteDetail() {
+  const detail = document.getElementById('palette-detail');
+  const idx = STATE.selectedSeasonIdx;
+  const season = DATA.seasons[idx];
+  const palette = DATA.palette_strip[season] || [];
+  const totalWeight = palette.reduce((s, p) => s + p.weight, 0);
+
+  const L = DATA.color_series.L[idx];
+  const a = DATA.color_series.a[idx];
+  const b = DATA.color_series.b[idx];
+  const chroma = DATA.color_series.chroma[idx];
+
+  const seasonLabel = DATA.season_labels[idx];
+  // Build pretty season name like "Fall/Winter 2026"
+  const parts = season.split('-');
+  const yr_p = parts[parts.length - 1];
+  const seasonPretty = parts[0] === 'fall'
+    ? `Fall/Winter ${yr_p}`
+    : `Spring/Summer ${yr_p}`;
+
+  detail.innerHTML = `
+    <div class="palette-detail-left">
+      <h4><span class="roman">${seasonPretty}</span></h4>
+      <p>The five colors that defined this season's runways across all 50 houses, ordered by their weighted prevalence.</p>
+      <div class="palette-stats">
+        <div>
+          <div class="stat-label">Lightness L*</div>
+          <div class="stat-val">${L?.toFixed(1) ?? '—'}</div>
+        </div>
+        <div>
+          <div class="stat-label">Chroma</div>
+          <div class="stat-val">${chroma?.toFixed(1) ?? '—'}</div>
+        </div>
+        <div>
+          <div class="stat-label">a* axis</div>
+          <div class="stat-val">${a?.toFixed(1) ?? '—'}</div>
+        </div>
+        <div>
+          <div class="stat-label">b* axis</div>
+          <div class="stat-val">${b?.toFixed(1) ?? '—'}</div>
+        </div>
+      </div>
+    </div>
+    <div class="palette-detail-right">
+      ${palette.map(p => `
+        <div class="palette-color-row">
+          <div class="palette-color-chip" style="background:${p.hex}"></div>
+          <div class="palette-color-info">
+            <div class="hex">${p.hex.toUpperCase()}</div>
+            <div class="lab">L* ${p.L} &middot; a* ${p.a} &middot; b* ${p.b}</div>
+          </div>
+          <div class="palette-color-pct">${(p.weight * 100 / totalWeight).toFixed(0)}%</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ============================================================
+// FORECAST GRID
+// ============================================================
+function renderForecastGrid() {
+  const grid = document.getElementById('forecast-grid');
+  grid.innerHTML = '';
+
+  const startIdx = DATA.meta.test_seasons_start_idx;
+  const seasons = DATA.seasons.slice(startIdx);
+
+  seasons.forEach((season, i) => {
+    const idx = startIdx + i;
+    const palette = DATA.palette_strip[season] || [];
+
+    // Predicted: use prior-year same-season palette as baseline (same logic as forecast)
+    const predSeason = idx >= 2 ? DATA.seasons[idx - 2] : null;
+    const predPalette = predSeason ? (DATA.palette_strip[predSeason] || []) : [];
+
+    // Compute rough MAE between predicted and actual L*, a*, b*
+    let mae = '—';
+    if (DATA.color_series.L[idx] != null && DATA.color_forecast.L[idx] != null) {
+      const e = Math.abs(DATA.color_series.L[idx] - DATA.color_forecast.L[idx])
+              + Math.abs(DATA.color_series.a[idx] - DATA.color_forecast.a[idx])
+              + Math.abs(DATA.color_series.b[idx] - DATA.color_forecast.b[idx]);
+      mae = (e / 3).toFixed(2);
+    }
+
+    const card = document.createElement('div');
+    card.className = 'forecast-card';
+    const fParts = season.split('-');
+    const fYr = fParts[fParts.length - 1];
+    const fSeasonName = fParts[0] === 'fall' ? 'Fall/Winter' : 'Spring/Summer';
+
+    card.innerHTML = `
+      <div class="forecast-card-label">Test Season ${i + 1} of ${seasons.length}</div>
+      <div class="forecast-card-season"><span class="roman">${fSeasonName}</span> ${fYr}</div>
+      <div class="forecast-swatches">
+        <div class="forecast-swatch-block">
+          <div class="swatch-label">Predicted</div>
+          <div class="forecast-swatch predicted">
+            ${predPalette.map(p => `<div style="background:${p.hex}"></div>`).join('') || '<div style="background:#ddd"></div>'}
+          </div>
+        </div>
+        <div class="forecast-swatch-block">
+          <div class="swatch-label">Actual</div>
+          <div class="forecast-swatch">
+            ${palette.map(p => `<div style="background:${p.hex}"></div>`).join('') || '<div style="background:#ddd"></div>'}
+          </div>
+        </div>
+      </div>
+      <div class="forecast-card-mae">
+        <span class="label">Mean LAB error</span>
+        <span class="val">${mae}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ============================================================
+loadData();
+</script>
+
+</body>
+</html>
